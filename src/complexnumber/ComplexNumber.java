@@ -2,8 +2,36 @@ package complexnumber;
 
 public class ComplexNumber
 {
+	static private double initRe;
+    static private double initIm;
     private double re;
     private double im;
+    
+    /**
+     * Static method, initialize the variables initializeRe and initializeIm to default value.
+     * Works only with rectangular coordinates.
+     * @param re
+     * @param im
+     */
+    public static void setInitRectangular(double re, double im)
+    {
+        initRe = re;
+        initIm = im;
+    }
+    
+    /**
+     * Static method, initialize the variables initializeRe and initializeIm to default value, given argument and modulus.
+	 * Works only with polar coordinates.
+     * @param modulus
+     * @param argument
+     */
+    public static void setInitPolar(double modulus, double argument)
+    {
+        if(modulus < 0)
+        	throw new IllegalArgumentException("Modulus must be greater or equal to 0");
+        initRe = Math.cos(argument*Math.PI/180)*modulus;
+        initIm = Math.sin(argument*Math.PI/180)*modulus;
+    }
         
     /**
      * Inzializza le variabili re e im
@@ -43,11 +71,11 @@ public class ComplexNumber
      * @param operand
      * @return
      */
-    public ComplexNumber add(ComplexNumber operand)
+    static public ComplexNumber add(ComplexNumber operand1, ComplexNumber operand2)
     {
-    	ComplexNumber result = new ComplexNumber();
-        result.setRectangular(this.re+operand.re, this.im+operand.im);
-    	return result;
+    	ComplexNumber risultato = new ComplexNumber();
+    	risultato.setRectangular(operand1.re+operand2.re, operand1.im+operand2.im);
+    	return risultato;
     }
     
     /**
@@ -55,11 +83,11 @@ public class ComplexNumber
      * @param operand
      * @return
      */
-    public ComplexNumber sub(ComplexNumber operand)
+    static public ComplexNumber sub(ComplexNumber operand1, ComplexNumber operand2)
     {
-    	ComplexNumber result = new ComplexNumber();
-    	result.setRectangular(this.re-operand.re, this.im-operand.im);
-    	return result;
+    	ComplexNumber risultato = new ComplexNumber();
+    	risultato.setRectangular(operand1.re-operand2.re, operand1.im-operand2.im);
+    	return risultato;
     }
     
     /**
@@ -67,11 +95,11 @@ public class ComplexNumber
      * @param operand
      * @return
      */
-    public ComplexNumber multiply(ComplexNumber operand)
+    static public ComplexNumber multiply(ComplexNumber operand1, ComplexNumber operand2)
     {
-    	ComplexNumber result = new ComplexNumber();
-    	result.setPolar(this.getArgument()+operand.getArgument(), this.getModulus()*operand.getModulus());
-    	return result;
+    	ComplexNumber risultato = new ComplexNumber();
+    	risultato.setPolar(operand1.getArgument()+operand2.getArgument(), operand1.getModulus()*operand2.getModulus());
+    	return risultato;
     }
     
     /**
@@ -79,22 +107,22 @@ public class ComplexNumber
      * @param operand
      * @return
      */
-    public ComplexNumber divide(ComplexNumber operand)
+    static public ComplexNumber divide(ComplexNumber operand1, ComplexNumber operand2)
     {
-    	ComplexNumber result = new ComplexNumber();
-    	result.setPolar(this.getArgument()-operand.getArgument(), this.getModulus()/operand.getModulus());
-    	return result;
+    	ComplexNumber risultato = new ComplexNumber();
+    	risultato.setPolar(operand1.getArgument()-operand2.getArgument(), operand1.getModulus()/operand2.getModulus());
+    	return risultato;
     }
         
     /**
      * Ritorna il complesso coniugato del numero complesso
      * @return
      */
-    public ComplexNumber getConjugate()
+    static public ComplexNumber getConjugate(ComplexNumber operand)
     {
-    	ComplexNumber result = new ComplexNumber();
-    	result.setRectangular(this.re, -this.im);
-    	return result;
+    	ComplexNumber risultato = new ComplexNumber();
+    	risultato.setRectangular(operand.re, -operand.im);
+    	return risultato;
     }
     
     /**
@@ -178,9 +206,5 @@ public class ComplexNumber
      *	    7) 
      *      	x = a+bi 
      *      	x = a-bi
-     */
-     * 
-     *
-     * 
      */
 }
