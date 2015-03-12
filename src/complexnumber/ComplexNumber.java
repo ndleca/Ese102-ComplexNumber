@@ -2,11 +2,128 @@ package complexnumber;
 
 public class ComplexNumber
 {
-    private double re;
-    private double im;
-        
+	private static double initRe;
+	private static double initIm;
+	private double re;
+	private double im;
+	private StringFormat format;
+	private static StringFormat initFormat;
+	
+	/**
+	 * Inizializza l'istanza
+	 */
+	public ComplexNumber()
+	{
+		this.re = ComplexNumber.initRe;
+		this.im = ComplexNumber.initIm;
+		this.format = ComplexNumber.initFormat;
+	}
+	
+	/**
+	 * Il formato della stringa
+	 */
+	public static enum StringFormat
+	{
+		RECTANGULAR,
+		POLAR
+	}
+	
+	/**
+	 * Restituisce il valore di initRe e initIm
+	 * @param re
+	 * @param im
+	 */
+	public static void setInitRectangular(double re, double im)
+    {
+		initRe = re;
+        initIm = im;
+        initFormat = StringFormat.RECTANGULAR;
+	}
+    
+	/**
+	 * Restituisce il valore di initRe e initIm
+	 * @param modulus
+	 * @param argument
+	 */
+	public static void setInitPolar(double modulus, double argument)
+	{
+		if(modulus < 0)
+			throw new IllegalArgumentException("Modulus must be greater or equal to 0");
+		initRe = Math.cos(argument*Math.PI/180)*modulus;
+		initIm = Math.sin(argument*Math.PI/180)*modulus;
+		initFormat = StringFormat.POLAR;
+	}
+
+	/**
+	 * Restituisce il risultato della addizione
+	 * @param operand
+	 * @return
+	 */
+	public static ComplexNumber add(ComplexNumber operando1, ComplexNumber operando2)
+	{
+		ComplexNumber result = new ComplexNumber();
+	    result.setRectangular(operando1.getRe()+operando2.getRe(), operando1.getIm()+operando2.getIm());
+		return result;
+	}
+
+	/**
+	 * Restituisce il risultato della sottrazione
+	 * @param operand
+	 * @return
+	 */
+	public static ComplexNumber sub(ComplexNumber operando1, ComplexNumber operando2)
+	{
+		ComplexNumber result = new ComplexNumber();
+	    result.setRectangular(operando1.getRe()-operando2.getRe(), operando1.getIm()-operando2.getIm());
+		return result;
+	}
+
+	/**
+	 * Restituisce il risultato della moltiplicazione
+	 * @param operand
+	 * @return
+	 */
+	public static ComplexNumber multiply(ComplexNumber operando1, ComplexNumber operando2)
+	{
+		ComplexNumber result = new ComplexNumber();
+		result.setPolar(operando1.getModulus()*operando2.getModulus(), operando1.getArgument()+operando2.getArgument());
+		return result;
+	}
+
+	/**
+	 * Restituisce il risultato della divisione
+	 * @param operand
+	 * @return
+	 */
+	public static ComplexNumber divide(ComplexNumber operando1, ComplexNumber operando2)
+	{
+		ComplexNumber result = new ComplexNumber();
+		result.setPolar(operando1.getModulus()/operando2.getModulus(), operando1.getArgument()-operando2.getArgument());
+		return result;
+	}
+
+	/**
+	 * Restituisce il complesso coniugato
+	 * @return
+	 */
+	public static ComplexNumber getConjugate(ComplexNumber operando)
+	{
+		ComplexNumber r = new ComplexNumber();
+		r.setRectangular(operando.getRe(), -operando.getIm());
+		return r;
+	}
+
+	/**
+     * Formato della stringa
+     * @param format
+     */
+    public void setStringFormat(StringFormat format)
+    {
+		this.format = format;
+	}
+    
     /**
-     * Inzializza le variabili re e im
+     * Setta l'istanza
      * @param re
      * @param im
      */
@@ -17,119 +134,20 @@ public class ComplexNumber
     }
     
     /**
-     * Inizializza le variabili argument e modulus
+     * Setta l'istanza
      * @param modulus
      * @param argument
      */
-    public void setPolar(double argument, double modulus)
+    public void setPolar(double modulus, double argument)
     {
-    	if(modulus >= 0)
-        {
-        	this.re = Math.cos(argument*Math.PI/180)*modulus;
-	        this.im = Math.sin(argument*Math.PI/180)*modulus;
-        	if(argument == 90)
-        		this.re = 0;
-        	else if(argument == 180)
-	        	this.im = 0;
-        	else if(argument == 270)
-        		this.re = 0;
-        }
-        else
-        	throw new IllegalArgumentException("il valore del modulo deve essere uguale o maggiore di 0");
+        if(modulus < 0)
+        	throw new IllegalArgumentException("Il valore del modulo deve essere maggiore o uguale a 0.");        	
+        this.re = Math.cos(argument*Math.PI/180)*modulus;
+	    this.im = Math.sin(argument*Math.PI/180)*modulus;
     }
     
     /**
-     * Somma due numeri complessi
-     * @param operand
-     * @return
-     */
-    public ComplexNumber add(ComplexNumber operand)
-    {
-    	ComplexNumber result = new ComplexNumber();
-        result.setRectangular(this.re+operand.re, this.im+operand.im);
-    	return result;
-    }
-    
-    /**
-     * Sottrae due numeri complessi
-     * @param operand
-     * @return
-     */
-    public ComplexNumber sub(ComplexNumber operand)
-    {
-    	ComplexNumber result = new ComplexNumber();
-    	result.setRectangular(this.re-operand.re, this.im-operand.im);
-    	return result;
-    }
-    
-    /**
-     * Moltiplica due numeri complessi
-     * @param operand
-     * @return
-     */
-    public ComplexNumber multiply(ComplexNumber operand)
-    {
-    	ComplexNumber result = new ComplexNumber();
-    	result.setPolar(this.getArgument()+operand.getArgument(), this.getModulus()*operand.getModulus());
-    	return result;
-    }
-    
-    /**
-     * Divide due numeri complessi
-     * @param operand
-     * @return
-     */
-    public ComplexNumber divide(ComplexNumber operand)
-    {
-    	ComplexNumber result = new ComplexNumber();
-    	result.setPolar(this.getArgument()-operand.getArgument(), this.getModulus()/operand.getModulus());
-    	return result;
-    }
-        
-    /**
-     * Ritorna il complesso coniugato del numero complesso
-     * @return
-     */
-    public ComplexNumber getConjugate()
-    {
-    	ComplexNumber result = new ComplexNumber();
-    	result.setRectangular(this.re, -this.im);
-    	return result;
-    }
-    
-    /**
-     * Stampa il numero complesso
-     * @return
-     */
-    public String formatComplexNumber()
-    {
-        String result = this.getRe() + "+(" + this.getIm() + ")i";
-        return result;
-    }
-    
-    /**
-     * Ritorna il modulo
-     * @return
-     */
-    public double getModulus()
-    {
-        return(Math.sqrt(Math.pow(this.re, 2)+Math.pow(this.im, 2)));
-    }
-        
-    /**
-     * Ritorna l'argomento
-     * @return
-     */
-    public double getArgument()
-    {
-    	int bugFix = 0;
-    	if(this.re < 0)
-    		bugFix = 180;
-    	return((Math.atan(this.im/this.re)*180)/Math.PI+bugFix);
-    }
-    
-    /**
-     * Ritorna re
+     * Restituisce re
      * @return
      */
     public double getRe()
@@ -138,7 +156,7 @@ public class ComplexNumber
     }
 
     /**
-     * Ritorna im
+     * Restituisce im
      * @return
      */
     public double getIm()
@@ -146,41 +164,141 @@ public class ComplexNumber
         return im;
     }
     
-    /*
-     * 		1) Math.sqrt(Math.pow(this.re, 2)+Math.pow(this.im, 2))
-     * 		   Math.atan(this.im/this.re)*180)/Math.PI
-     * 		   Per re = 0 e im = 0 l'argomento non esiste
-     *         this.re = Math.cos(argument*Math.PI/180)*modulus
-	 *         this.im = Math.sin(argument*Math.PI/180)*modulus
-     * 
-     * 		2) non si puo fornire quatro funzioni setter (setRe, setIm, setModulus, setArgument), 
-     * 		   perche bisogna lavorare in coppia con 2 parametri (setRectangular, setPolar)
-     * 
-     * 		3) siccome avrei bisogno di 2 costruttori, che non possono esistere contemporaneamente 
-     * 		   dato che richiedono entrambia lo stesso numero di valori dello stesso tipo, non ne ho utilizzato nessuno
-     * 
-     * 		4) Devi usare 4 funzioni getter perche un metodo non puo ritornare 2 valori
-     *
-     *      5) 
-     *    		x = a1+b1i 
-     *      	y = a2+b2i
-     *      	x+y = (a1+a2)+(b1+b2)i
-     *      	x-y = (a1-a2)+(b1-b2)i
-     *      
-     *      6) 
-     *	    	x = a1+b1i 
-     *     		y = a2+b2i
-     *      	Argomento = ArgomentoX+ArgomentoY
-     *      	Modulo = ModuloX*ModuloY
-	 *	    	Argomento = ArgomentoX-ArgomentoY
-     *      	Modulo = ModuloX/ModuloY
-     *	
-     *	    7) 
-     *      	x = a+bi 
-     *      	x = a-bi
+    /**
+     * Restituisce l'argomento
+     * @return
      */
+    public double getArgument()
+    {
+    	double argument = 0;
+		if(re == 0)
+		{
+			if(im < 0)
+				argument = 270;
+			if(im > 0)
+				argument = 90;
+		}
+		else
+		{
+			argument = Math.toDegrees(Math.atan(this.im/this.re));
+			if (re < 0 && im < 0 || re < 0 && im > 0)
+				argument = argument+180;
+			else if (re > 0 && im < 0)
+				argument = argument+6360;
+		}
+		return argument;
+    }
+    
+    /**
+     * Restituisce il modulo:)
      * 
-     *
-     * 
+     * @return
      */
+    public double getModulus()
+    {
+        return(Math.sqrt(Math.pow(this.getRe(), 2)+Math.pow(this.getIm(), 2)));
+    }
+    
+    /**
+	 * Restituisce il risultato della somma
+	 * @param operand
+	 * @return
+	 */
+	public ComplexNumber add(ComplexNumber operand)
+	{
+		ComplexNumber result = new ComplexNumber();
+	    result.setRectangular(this.getRe()+operand.getRe(), this.getIm()+operand.getIm());
+		return result;
+	}
+
+	/**
+	 * Restituisce il risultato della sottrazione
+	 * @param operand
+	 * @return
+	 */
+	public ComplexNumber sub(ComplexNumber operand)
+	{
+		ComplexNumber result = new ComplexNumber();
+	    result.setRectangular(this.getRe()-operand.getRe(), this.getIm()-operand.getIm());
+		return result;
+	}
+
+	/**
+	 * Restituisce il risultato della moltiplicazione
+	 * @param operand
+	 * @return
+	 */
+	public ComplexNumber multiply(ComplexNumber operand)
+	{
+		ComplexNumber result = new ComplexNumber();
+		result.setPolar(this.getModulus()*operand.getModulus(), this.getArgument()+operand.getArgument());
+		return result;
+	}
+
+	/**
+	 * Restituisce il risultato della divisione
+	 * @param operand
+	 * @return
+	 */
+	public ComplexNumber divide(ComplexNumber operand)
+	{
+		ComplexNumber result = new ComplexNumber();
+		result.setPolar(this.getModulus()/operand.getModulus(), this.getArgument()-operand.getArgument());
+		return result;
+	}
+
+	/**
+	 * Restituisce un complesso coniugato
+	 * @return
+	 */
+	public ComplexNumber getConjugate()
+	{
+		ComplexNumber result = new ComplexNumber();
+		result.setRectangular(this.getRe(), -this.getIm());
+		return result;
+	}
+    
+	/**
+	 * Override del metodo toString
+	 */
+    @Override public String toString()
+    {
+		return toString(this.format);
+	}
+   
+    /**
+     * Ritorna la stringa
+     * @param format
+     * @return
+     */
+    public String toString(StringFormat format)
+    {
+    	String r = new String();
+		switch(format) {
+		case RECTANGULAR:
+			r = this.re + "+(" + this.im + ")i";
+			break;
+		case POLAR:
+			r = this.getModulus() + "*exp(i*" + this.getArgument() +")";
+			break;
+		default:
+			throw new UnsupportedOperationException();
+		}
+		return r;
+	}
+    
+    /**
+     * Override del metodo equals
+     */
+	@Override public boolean equals(Object oggetto)
+	{
+		boolean uguali = false;
+		if(oggetto instanceof ComplexNumber)
+		{
+			ComplexNumber punt = (ComplexNumber)oggetto;
+			if(this.getRe() == punt.getRe() && this.getIm() == punt.getIm())
+				uguali = true;
+		}
+		return uguali;
+	}
 }
